@@ -1,11 +1,11 @@
 #!/usr/bin/bash
-export http_proxy=http://vproxy3-mgmt.telekom.lv:8080
-export https_proxy=http://vproxy3-mgmt.telekom.lv:8080
+export http_proxy=************************************
+export https_proxy=***********************************
 unset http_proxy
 unset https_proxy
 
 
-tpm=vsop.telekom.lv
+tpm=*************
 host=$1
 username=$2
 user_password=$3
@@ -13,8 +13,8 @@ user_password=$3
 # active directory user
 aduser=$4
 
-# dba project id = 12
-dba_project_id='12'
+# dba project id = **
+dba_project_id='**'
 tag='root,MySQL'
 
 
