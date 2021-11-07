@@ -32,7 +32,7 @@
 
 - name: Add passwords to VSOP
   # vars:
-  #   - pwd_root: Ih_47j<DMY95_#jh
+  #   - pwd_root: some_root_password
   expect:
     command: /usr/lbin/add_password_to_vsop.sh {{inventory_hostname|regex_replace('-mgmt')}} root '{{ pwd_root }}' {{vsop_account}} 
     responses:
