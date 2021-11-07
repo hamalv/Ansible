@@ -1,0 +1,14 @@
+- name: install samba package
+  tags: samba
+  package: 
+    name: samba
+    state: latest
+
+- name: copy script files
+  tags: samba,script
+  copy:
+    src: script.py
+    dest: /home/jfreiber/scripts/first_script.py  # filename at destination
+    owner: root
+    group: root
+    mode: 0644

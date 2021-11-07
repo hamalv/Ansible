@@ -1,0 +1,15 @@
+---
+    - name: check lock
+      shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+      delegate_to: ansible
+
+    - name: mysql-stop
+      service: name=mysqld state=stopped
+    - name: update mysql-server
+      yum: pkg=mysql-server state=latest
+    - name: mysql-start
+      service: name=mysqld state=started
+    - name: Upgrade mysql mysql_upgrade
+      action: command mysql_upgrade -u root -p{{mysql_root_password}}
+    - name: mysql-start
+      service: name=mysqld state=restarted

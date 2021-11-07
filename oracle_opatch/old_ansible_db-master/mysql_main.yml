@@ -1,0 +1,19 @@
+---
+  - name: Playbook mysql-install
+    hosts: testos
+    vars_prompt:
+     - name: "mysql_root_password"
+       prompt: "Enter mysql root password?"
+       private: no
+     - name: "mysql_backup_password"
+       prompt: "Enter BackupOP mysql password?"
+       private: no
+     - name: "mysql_zabbix_password"
+       prompt: "Enter mysql zabbix password?"
+       private: no 
+    roles:
+      - mysql-install
+      - mysql-secure
+      - mysql-zabbix-db
+      - mysql-backup-db 
+

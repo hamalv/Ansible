@@ -1,0 +1,20 @@
+### IP or hostname (simple edition) ###
+10.2.23.225 apache_package=apache2 php_package=libapache2-mod-php       # Ubuntu
+10.2.23.226 apache_package=apache2 php_package=libapache2-mod-php       # Ubuntu
+1.2.3.4 apache_package=httpd php_package=php                            # Centos 
+
+
+
+
+### Groups ###
+[web_servers]
+10.2.23.225
+
+[db_servers]
+10.2.23.226
+
+[file_servers]
+1.2.3.4
+
+[workstations]
+2.3.4.5

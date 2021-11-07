@@ -1,0 +1,22 @@
+- name: Stopping service mysqld 
+  command: systemctl stop mysqld
+
+- name: Delete all mysql files
+  file: 
+    path: /data/mysql
+    state: absent
+
+- name: Delete file mysqld.log 
+  file:
+    path: /var/log/mysqld.log
+    state: absent
+
+- name: Delete file my.cnf 
+  file:
+    path: /etc/my.cnf
+    state: absent
+
+- name: Delete file add_password_to_vsop.sh 
+  file:
+    path: /usr/lbin/add_password_to_vsop.sh
+    state: absent

@@ -1,0 +1,44 @@
+---
+#    - name: check lock
+#      shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+#      delegate_to: ansible
+    - name: Find temporary password
+      shell: "echo `grep 'temporary.*root@localhost' /var/log/mysqld.log | sed 's/.*root@localhost: //'`"
+      register: mysql_root_password_temp
+      tags: register
+    - name: Update MySQL root password for localhost root account (5.7.x).
+      shell: mysql -u root -p'"{{ mysql_root_password_temp }}"' --connect-expired-password -NBe 'ALTER USER root@localhost IDENTIFIED  WITH mysql_native_password BY "{{ mysql_root_password }}";' 
+    - name: Create databases
+      mysql_db:
+        login_unix_socket=/data/mysql/mysql.sock
+        name={{ db_name }}
+        state=present
+        collation=utf8mb4_0900_ai_ci 
+        encoding=utf8mb4 
+        login_user='root'
+        login_password='{{ mysql_root_password }}'
+    - name: Create user Backup
+      mysql_user:
+        login_unix_socket=/data/mysql/mysql.sock 
+        name=Backup 
+        password="{{ mysql_backup_password }}"
+        priv="*.*:SELECT,SUPER,LOCK TABLES,SHOW VIEW,EVENT"
+        state=present 
+        login_user='root'
+        login_password='{{ mysql_root_password }}'
+    - name: Create user Zabbix
+      mysql_user:
+        login_unix_socket=/data/mysql/mysql.sock 
+        name=Zabbix
+        password="{{ mysql_zabbix_password }}"
+        priv="*.*:SUPER,REPLICATION CLIENT,SELECT,SHOW VIEW" 
+        state=present
+        login_user='root'
+        login_password='{{ mysql_root_password }}'
+     # Configure MySQL.
+    - include_tasks: backup.yml 
+    - local_action:
+                    mail
+                    subject="Ansible-report"
+                    body="Hello DBA, we just created database {{ db_name }},which is located on {{ ansible_hostname }}a"
+                    to="{{ mail_to_dba }}"

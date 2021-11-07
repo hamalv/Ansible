@@ -1,0 +1,40 @@
+-
+
+- hosts: all
+  become: true                      # execute as sudo
+  pre_tasks:                        # pre_tasks always be run first
+
+  - name: install update (CentOS)
+    tags: always                    # run this tag alway
+    dnf: 
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install update (Ubuntu)
+    tags: always
+    apt: 
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key
+    tags: always
+    authorized_key:
+      user: simon
+      key: "ssh-ssdsad ddsf454fds45sfd4refds"
+  
+  - name: add sudoers file for jfreiber
+    tags: always
+    copy:
+      src: sudoer_jfreiber
+      dest: /etc/sudoers.d/jfreiber
+      owner: root
+      group: root
+      mode: 0440
+
+

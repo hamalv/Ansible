@@ -1,0 +1,21 @@
+---
+- hosts: database 
+  vars_prompt:
+    - name: "file_name"
+      prompt: "Which file to copy?"
+      private: no
+  tasks:
+    - name: copy patch
+      copy:
+        src: /usr/oracle/install/patches/{{file_name }}
+        dest: /usr/oracle/tmp/{{file_name }}
+        owner: oracle 
+        group: dba 
+        mode: u=rw,g=r
+    - name: Unarchive patch
+      unarchive:
+        src: /usr/oracle/tmp/{{file_name }} 
+        dest: /usr/oracle/tmp/ 
+        remote_src: yes
+        owner: oracle
+        group: dba 

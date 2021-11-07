@@ -1,0 +1,162 @@
+-
+
+- hosts: all
+  become: true                      # execute as sudo
+  pre_tasks:                        # pre_tasks always be run first
+
+  - name: install update (CentOS)
+    tags: always                    # run this tag alway
+    dnf: 
+      # update_only: yes
+      update_cache: yes
+    changed_when: false             # 
+    when: ansible_distribution == "CentOS"
+
+  - name: install update (Ubuntu)
+    tags: always
+    apt: 
+      # upgrade: dist
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+# - hosts: all
+#   become: true
+#   tasks:
+
+#   - name: create jfreiber user
+#     tag: always
+#     user:
+#       name: jfreiber                # new user username
+#       groups: root                  # new user group
+
+#   - name: add ssh key
+#     tags: always
+#     authorized_key:
+#       user: simon
+#       key: "ssh-ssdsad ddsf454fds45sfd4refds"
+  
+#   - name: add sudoers file for jfreiber
+#     tags: always
+#     copy:
+#       src: sudoer_jfreiber
+#       dest: /etc/sudoers.d/jfreiber
+#       owner: root
+#       group: root
+#       mode: 0440
+
+
+
+
+- hosts: workstations
+  become: true
+  tasks:
+  
+  - name: install unzip
+    package:
+      name: unzip
+  
+  - name: install terraform
+    unarchive:
+      src: https://_____bla_bla_link_____
+      dest: /usr/local/bin/
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+    
+
+
+
+- hosts: web_servers
+  become: true
+  tasks:
+  
+  - name: install apache2 and php for Ubuntu
+    tags: apache,apache2,ubuntu                 #
+    apt: 
+      name: 
+        - apache2
+        - libapache2-mod-php
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install apache and php on Centos
+    tags: apache,centos,httpd
+    dnf:
+      name: 
+        - httpd 
+        - php
+      state: latest
+    when: ansible_distribution == "Centos"
+
+  - name: start httpd (CentOS)
+    tags: centos,starting,apache
+    service:
+      name: httpd
+      state: started
+      enable: yes
+    when: ansible_distribution == "Centos"
+
+  - name: change e-mail address for admin
+    tags: apche,email,centos,httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin my@mail.com
+    when: ansible_distribution == "Centos"
+    register: httpd                             # allows capture the state in variable
+
+  - name: restart htppd (CentosOS)
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed                         # restart service when httpd.conf changed
+
+
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: install mariadb packeage (CentOS)
+    tags: centos,db,mariadb
+    dnf:
+      name: mariadb
+      state: latest
+    when: ansible_distribution == "Centos"
+
+  - name: install mariadb packeage (Ubuntu)
+    tags: ubuntu,db,mariadb
+    apt:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+
+
+
+
+
+- hosts: file_servers
+  become: true
+  tasks:
+  
+  - name: install samba package
+    tags: samba
+    package: 
+      name: samba
+      state: latest
+
+  - name: copy script files
+    tags: samba,script
+    copy:
+      src: script.py
+      dest: /home/jfreiber/scripts/first_script.py  # filename at destination
+      owner: root
+      group: root
+      mode: 0644
+
+
+
+

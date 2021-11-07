@@ -1,0 +1,7 @@
+---
+  - name: Playbook mysql-create-db
+    hosts: testos
+
+    roles:
+      - mysql-create-db
+

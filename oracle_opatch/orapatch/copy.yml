@@ -1,0 +1,11 @@
+---
+   - name: Patch copy and extract
+     vars: 
+        patch_location: /usr/oracle/patches
+        patch_zip: p32900144_122010_Linux-x86-64.zip
+        patch_short_name: 32900144
+        remote_location: /usr/oracle/oradb01/install
+     hosts: database
+     user: oracle
+     roles:
+       - patchcopy

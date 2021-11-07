@@ -1,0 +1,34 @@
+docs.ansible.com
+
+Youtube channel 
+    - Good explanation and first touch - https://www.youtube.com/watch?v=5hycyr-8EKs&ab_channel=NetworkChuck
+    - Detailed information and lessons - https://www.youtube.com/playlist?list=PLT98CRl2KxKEUHie1m24-wkyHpEsa4Y70
+
+
+# Commands
+-i [host details (filename), which contain IP, hostnames or group information]
+-m [module name]
+-a [module argument]
+    -a "name=snapd state=latest" [upgrade argument]
+    -a "upgrade=dist" [upgrade all distributions]
+--become --ask-become-pass [execute as root, will ask root password]
+
+ansible all -i hosts -m ping
+ansible all --list-hosts
+ansible all -m gather_facts
+ansible all -m gather_facts 10.2.23.225
+
+# execute using root account
+ansible all -m apt -a update_cache=True --become --ask-become-pass
+ansible all -m apt -a name=vim-nox --become --ask-become-pass
+ansible all -m apt -a "name=snapd state=latest" --become --ask-become-pass
+
+
+##########  Ansible-playbook  ##########
+ansible-playbook --become --ask-become-pass install.yml
+
+ansible-playbook --list-tags filename.yml                                       # list all tags from filename.yml
+ansible-playbook --tags centos --become --ask-become-pass install.yml           # run only on tagged (centos) tasks
+ansible-playbook --tags "apache,centos" --become --ask-become-pass install.yml  # multiple tags
+
+ansible-playbook install_for_groups.yml                                         # after add jfreiber @ansible.cfg

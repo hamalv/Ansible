@@ -1,0 +1,20 @@
+---
+
+- hosts: all
+  become: true                      # execute as sudo
+  tasks:
+  
+  - name: update repository index
+    apt:
+      update_cache: yes
+
+  - name: install apache2 package   # function name
+    apt:                            # module name
+      name: apache2                 # package we want to install
+      state: absent                 # remove package
+  
+  - name: add php support for apache
+    apt: 
+      name: libapache2-mod-php
+      state: absent
+

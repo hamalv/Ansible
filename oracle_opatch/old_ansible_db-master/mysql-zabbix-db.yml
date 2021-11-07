@@ -1,0 +1,12 @@
+---
+  - name: Playbook mysql-zabbix-db 
+    hosts: testos
+    vars_prompt:
+     - name: "mysql_root_password"
+       prompt: "Enter mysql root password?"
+       private: no
+     - name: "mysql_zabbix_password"
+       prompt: "Enter mysql zabbix password?"
+       private: no 
+    roles:
+      - mysql-zabbix-db 

@@ -1,0 +1,2 @@
+[jira-db-prd_host]
+jira-db-prd inventory_hostname=jira-db-prd

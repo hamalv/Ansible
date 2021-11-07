@@ -1,0 +1,32 @@
+---
+  - block:
+        - name: "Copying OPatch"
+          copy:
+            src: "{{ patch_location }}/{{ opatch_zip }}"
+            dest: "{{ remote_location }}/{{ opatch_zip }}"
+
+        - name: "Copying patch"
+          copy:
+            src: "{{ patch_location }}/{{ patch_zip }}"
+            dest: "{{ remote_location }}/{{ patch_zip }}"
+
+        - name: "Checking if OPatch folder exists"
+          stat: 
+              path: "{{ remote_oracle_home_path }}/OPatch"
+          register: opatch_status
+
+        - name: "Renaming OPatch folder"
+          command: "mv {{ remote_oracle_home_path }}/OPatch {{ remote_oracle_home_path }}/OPatch_bck"
+          when: opatch_status.stat.exists
+        
+        - name: "Unarchive OPatch"
+          unarchive:
+            src: "{{ remote_location }}/{{ opatch_zip }}"
+            dest: "{{ remote_oracle_home_path }}"
+            remote_src: True
+        
+        - name: "Unarchive file"
+          unarchive:
+            src: "{{ remote_location }}/{{ patch_zip }}"
+            dest: "{{ remote_location }}"
+            remote_src: True

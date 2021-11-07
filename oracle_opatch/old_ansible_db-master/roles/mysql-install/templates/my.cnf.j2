@@ -1,0 +1,16 @@
+[mysqld]
+innodb_buffer_pool_size =2G
+innodb_buffer_pool_instances=30
+binlog_expire_logs_seconds=259200
+innodb_log_file_size=40M
+datadir=/data/mysql
+socket=/data/mysql/mysql.sock
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+[client]
+
+port=3306
+socket=/data/mysql/mysql.sock 
+
+[mysqld_safe]
+pid-file=/var/run/mysqld/mysqld.pid

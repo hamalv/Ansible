@@ -1,0 +1,10 @@
+---
+  - name: Playbook mysql-secure
+    hosts: testos 
+    vars_prompt:
+     - name: "mysql_root_password"
+       prompt: "Enter mysql root password?"
+       private: no    
+    roles:
+      - mysql-secure
+

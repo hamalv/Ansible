@@ -1,0 +1,53 @@
+#!/bin/bash
+MyUSER="BackupOP"
+MyPASS="a.fTQqYu3c6uxAPS"
+MyHOST="localhost"
+# Linux bin paths, change this if it can't be autodetected via which command
+MYSQL="$(which mysql)"
+MYSQLDUMP="$(which mysqldump)"
+CHOWN="$(which chown)"
+CHMOD="$(which chmod)"
+GZIP="$(which gzip)"
+DSMC="$(which dsmc)"
+MyCOMMAND="$MYSQL -u $MyUSER -h $MyHOST -p$MyPASS -Bse"
+# Backup Dest directory, change this if you have someother location
+DEST="/data/backup"
+# TSM MgmtClass Name
+M_CLASS=32D
+# Get hostname
+HOST="$(hostname)"
+# Get data in dd-mm-yyyy format
+NOW="$(date +"%d-%m-%Y")"
+# File to store current backup file
+FILE=""
+# Store list of databases
+DBS=""
+# DO NOT BACKUP these databases
+IGGY="sys tmp backup performance_schema information_schema #mysql50 lost+found"
+# Get all database list first
+DBS="$($MyCOMMAND 'show databases')"
+echo "Starting backup for $HOST at `date`"
+stimetotal=`date '+%s'`
+for db in $DBS
+do
+   skipdb=-1
+   if [ "$IGGY" != "" ];
+   then
+       for i in $IGGY
+       do
+           [ "$db" == "$i" ] && skipdb=1 || :
+       done
+   fi
+   if [ "$skipdb" == "-1" ] ; then
+       FILE="$DEST/$db.$HOST.$NOW.sql.gz"
+       # do all inone job in pipe,
+       # connect to mysql using mysqldump for select mysql database
+       # and pipe it out to gz file in backup dir :)
+    echo "`date +%Y%m%d%H%M`: Starting mysqldump backup of database ${db}"
+       $MYSQLDUMP -u $MyUSER -h $MyHOST -p$MyPASS -B --routines $db | $GZIP -9 > $FILE
+    $DSMC archive -quiet -DESC="${HOST} ${db} FULL $NOW" -ARCHM=${M_CLASS} -SUBDIR=YES -TAPEPROMPT=NO $FILE -delete
+    echo "`date +%Y%m%d%H%M`: Finished mysqldump backup of database ${db}"
+   fi
+done
+ftimetotal=`date '+%s'`
+echo "Finished backup for $HOST at `date` (elapsed=$((($ftimetotal - $stimetotal) / 60))min)"

@@ -1,0 +1,7 @@
+---
+  - name: Playbook mysql-update
+    hosts: all
+
+    roles:
+      - mysql-update
+

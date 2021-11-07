@@ -1,0 +1,61 @@
+- set_fact:
+    pwd_root: "{{ password_root }}"
+- set_fact:
+    pwd_zabbix: "{{ password_zabbix }}"
+- set_fact:
+    pwd_backupop: "{{ password_backupop }}"
+
+- name: Find temporary password
+  shell: "echo `grep 'temporary.*root@localhost' /var/log/mysqld.log | sed 's/.*root@localhost: //'`"
+  register: mysql_temp_password
+
+- debug:  
+    msg: 
+      - "Temporary root password - {{ mysql_temp_password.stdout }} "
+      - "Root password - {{ pwd_root }} "
+      - "Zabbix password - {{ pwd_zabbix }} "
+      - "BackupOP password - {{ pwd_backupop }} "
+
+- name: Update root@localhost password
+  command: mysql --user root --password="{{ mysql_temp_password.stdout }}" --connect-expired-password --execute="ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ pwd_root }}';"
+
+# Zabbix user and privs
+- name: Create user zabbix@localhost
+  command: mysql --user root --password="{{ pwd_root }}" --connect-expired-password --execute="CREATE USER 'zabbix'@'localhost' IDENTIFIED BY '{{ pwd_zabbix }}';"
+- name: Add grants to zabbix@localhost
+  command: mysql --user root --password="{{ pwd_root }}" --connect-expired-password --execute="GRANT SELECT ON mysql.* TO 'zabbix'@'localhost';"
+
+# BackupOP user and privs
+- name: Create user BackupOP@localhost
+  command: mysql --user root --password="{{ pwd_root }}" --connect-expired-password --execute="CREATE USER 'BackupOP'@'localhost' IDENTIFIED BY '{{ pwd_backupop }}';"
+- name: Add grants to BackupOP@localhost
+  command: mysql --user root --password="{{ pwd_root }}" --connect-expired-password --execute="GRANT SELECT,RELOAD,SUPER,LOCK TABLES,SHOW VIEW,EVENT ON *.* TO 'BackupOP'@'localhost';"
+
+
+- name: Create a directory if it does not exist
+  file:
+    path: /var/lib/zabbix/
+    state: directory
+    owner: zabbix
+
+- name: Create zabbix login path
+  expect:
+    command: sudo -u zabbix mysql_config_editor set --login-path=zabbix_mon --host=localhost --user=zabbix --password
+    responses:
+      (?i)password: "{{ pwd_zabbix }}"
+      (?i)continue: Y
+
+- name: Create BackupOP login path
+  expect:
+    command: mysql_config_editor set --login-path=BackupOP --host=localhost --user=BackupOP --password
+    responses:
+      (?i)password: "{{ pwd_backupop }}"
+      (?i)continue: Y
+
+- name: Modifying ltc_metadata.conf
+  command: sed -i '1s/$/ DBA_MYSQL/' /etc/zabbix/zabbix_agentd.d/ltc_metadata.conf
+
+- name: Restart service zabbix agent
+  service:
+    name: zabbix-agent
+    state: restarted

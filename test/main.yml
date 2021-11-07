@@ -1,0 +1,96 @@
+---
+
+
+#############################################
+########### Password to VSOP ################
+#############################################
+- hosts: all
+  vars:
+  #   aduser: jfreiber.sa 
+    username: ansible_test
+    user_password: Parole_root_test
+
+  vars_prompt:
+    - name: vsop_account
+      prompt: VSOP username?
+      private: no
+    - name: vsop_password
+      prompt: VSOP password?
+      private: yes
+
+  tasks:
+    - name: Add passwords to VSOP
+      expect:
+        command: /usr/lbin/add.sh {{inventory_hostname|regex_replace('-mgmt')}} {{username}} '{{user_password}}' {{vsop_account}} 
+        responses:
+            Password: "{{ vsop_password }}"
+      when: user_password is defined and username is defined
+      #no_log: true
+      #delegate_to: ansible
+
+
+
+
+
+
+
+
+
+#############################################
+########### Password generation #############
+#############################################
+
+# - hosts: chao
+#   vars:
+#     t_asci1: "{{ lookup('password', '/dev/null length=2 chars=ascii_letters') }}"
+#     t_asci2: "{{ lookup('password', '/dev/null length=1 chars=ascii_letters') }}"
+#     t_asci3: "{{ lookup('password', '/dev/null length=3 chars=ascii_letters') }}"
+#     t_asci4: "{{ lookup('password', '/dev/null length=2 chars=ascii_letters') }}"
+#     t_digi1: "{{ lookup('password', '/dev/null length=2 chars=digits') }}"
+#     t_digi2: "{{ lookup('password', '/dev/null length=2 chars=digits') }}"
+#     t_rand1: "{{ lookup('password', '/dev/null length=1 chars=#,_,<,>') }}"
+#     t_rand2: "{{ lookup('password', '/dev/null length=1 chars=#,_,<,>') }}"
+#     t_rand3: "{{ lookup('password', '/dev/null length=2 chars=#,_,<,>') }}"
+#     pwd1: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"
+#     pwd2: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"
+#     pwd3: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"
+#   tasks:
+#     - set_fact:
+#         tmp_pass: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"
+#     - debug:
+#         msg: "{{ tmp_pass }}"
+
+#     - set_fact:
+#         tmp_pass: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"
+#     - debug:
+#         msg: "{{ tmp_pass }}"
+
+#     - set_fact:
+#         tmp_pw1: "{{ pwd1 }}"
+#     - debug:
+#         msg: "{{ tmp_pw1 }}"
+
+#     - set_fact:
+#         tmp_pw2: "{{ pwd2 }}"
+#     - debug:
+#         msg: "{{ tmp_pw2 }}"
+
+#     - set_fact:
+#         tmp_pw3: "{{ pwd3 }}"
+#     - debug:
+#         msg: "{{ tmp_pw3 }}"
+
+    # - set_fact:
+    #     tmp_hexd: "{{ t_asci }}"
+    # - debug:
+    #     msg: "{{ tmp_hexd }}"
+
+    # - set_fact:
+    #     tmp_punc: "{{ t_punc }}"
+    # - debug:
+    #     msg: "{{ tmp_punc }}"
+
+    # - set_fact:
+    #     tmp_rand: "{{ t_rand }}"
+    # - debug:
+    #     msg: "{{ tmp_rand }}"

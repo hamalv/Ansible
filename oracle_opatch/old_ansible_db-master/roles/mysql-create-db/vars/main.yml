@@ -1,0 +1,10 @@
+---
+db_name: citruswpweb                 
+mysql_root_password: zlQ9.xtqvZd2mZ7W 
+mysql_backup_password: rcb.6B5W%64AgZXm  
+mysql_zabbix_password: Pb.7Hnrfz,JMJGk4 
+mail_to_dba: aleksandrs.asafovs@lattelecom.lv
+backup_datadir: /var/spool/ltk_scheduler
+backup_file: mysql 
+zabbix_datadir: /var/lib/zabbix 
+ssh_datadir: /home/dbbackop/.ssh

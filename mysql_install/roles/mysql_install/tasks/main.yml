@@ -1,0 +1,31 @@
+##################################################################
+# add spacewalk repo through ansible? (Andris Maziks)
+# mysql repo pievienošana spacewalk atkrīt. Spacewalko būs EOL
+##################################################################
+- name: Install mysql server
+  yum: 
+    name: "{{ mysql_server }}"
+    state: present
+
+- name: Create datadir '/data/mysql'
+  file:
+    path: /data/mysql
+    state: directory
+    owner: mysql
+    group: mysql
+    mode: '0755'
+    setype: mysqld_db_t   # mysqld_db_t means - default context element for the location of database files
+
+- name: Copy my.cnf
+  copy:
+    src: "{{ mycnf_file }}"
+    dest: "{{ mycnf_dest }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Start and enable MySql service
+  service:
+    name: "{{ mysql_service }}"
+    state: started
+    enabled: yes

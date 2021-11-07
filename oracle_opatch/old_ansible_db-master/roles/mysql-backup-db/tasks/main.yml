@@ -1,0 +1,19 @@
+---
+#    - name: check lock
+#      shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+#      delegate_to: ansible
+    - name: Create user backup 
+      mysql_user:
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        login_unix_socket: /data/mysql/mysql.sock 
+        name: BackupOP 
+        password: "{{ mysql_backup_password }}"
+        priv: '*.*:SUPER,REPLICATION CLIENT,SELECT,SHOW VIEW'
+        state: present
+    - name: Create BackupOP  login path
+      expect: 
+         command: mysql_config_editor set --login-path=BackupOP --host=localhost --user=BackupOP --password
+         responses:
+            (?i)password: "{{ mysql_backup_password }}"
+            (?i)continue: Y

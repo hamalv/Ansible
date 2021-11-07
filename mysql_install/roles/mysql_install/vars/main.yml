@@ -1,0 +1,4 @@
+mysql_server: mysql-community-server.x86_64
+mycnf_file: my.cnf
+mycnf_dest: /etc/my.cnf
+mysql_service: mysqld

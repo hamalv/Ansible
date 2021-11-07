@@ -1,0 +1,11 @@
+---
+- hosts: cassandra
+  become: true 
+  tasks:
+  - name: Copying file
+    copy:
+      src: backup_cassandra_local.sh
+      dest: /etc/cassandra/scripts/backup_cassandra_local.sh  # filename at destination
+      owner: root
+      group: root
+      mode: 0744

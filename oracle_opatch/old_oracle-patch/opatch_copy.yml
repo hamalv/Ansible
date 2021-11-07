@@ -1,0 +1,25 @@
+---
+- hosts: database
+  become: yes 
+  vars_prompt:
+    - name: "opatch"
+      prompt: "Opatch copy?"
+      private: no
+  tasks:
+    - name: copy opatch
+      copy:
+        src: /usr/oracle/install/patches/{{opatch }}
+        dest: /usr/oracle/ora122/{{opatch }}
+        owner: oracle
+        group: dba
+        mode: u=rw,g=r
+    - name: Mv opatch dir
+      command: mv /usr/oracle/ora122/OPatch /usr/oracle/ora122/OPatch_{{ansible_date_time.date }}  
+    - name: Unarchive Opatch 
+      unarchive:
+        src: /usr/oracle/ora122/{{opatch }} 
+        dest: /usr/oracle/ora122/ 
+        remote_src: yes
+        owner: oracle
+        group: dba
+

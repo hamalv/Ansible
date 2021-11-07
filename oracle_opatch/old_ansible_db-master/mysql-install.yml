@@ -1,0 +1,6 @@
+---
+  - name: Playbook mysql-install
+    hosts: testos
+    roles:
+      - mysql-install
+

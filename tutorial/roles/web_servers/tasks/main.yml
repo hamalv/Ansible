@@ -1,0 +1,41 @@
+- name: install apache2 and php for Ubuntu
+  tags: apache,apache2,ubuntu
+  apt: 
+    name: 
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: install apache and php on Centos
+  tags: apache,centos,httpd
+  dnf:
+    name: 
+      - httpd 
+      - php
+    state: latest
+  when: ansible_distribution == "Centos"
+
+- name: start httpd (CentOS)
+  tags: centos,starting,apache
+  service:
+    name: "{{ apache_service }}"
+    state: started
+    enable: yes
+  when: ansible_distribution == "Centos"
+
+- name: change e-mail address for admin
+  tags: apche,email,centos,httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin my@mail.com
+  when: ansible_distribution == "Centos"
+  #register: httpd     
+  notify: restart_apache                   
+
+- name: restart htppd (CentosOS)
+  service:
+    name: httpd
+    state: restarted
+  when: httpd.changed

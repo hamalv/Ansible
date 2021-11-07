@@ -1,0 +1,7 @@
+---
+    - name: Find temporary password
+      shell: "echo `grep 'temporary.*root@localhost' /var/log/mysqld.log | sed 's/.*root@localhost: //'`"
+      register: mysql_root_password_temp
+      tags: register
+    - name: Update MySQL root password for localhost root account (5.7.x).
+      shell: mysql -u root -p"{{ mysql_root_password_temp.stdout }}" --connect-expired-password -NBe 'ALTER USER root@localhost IDENTIFIED  WITH mysql_native_password BY "{{ mysql_root_password }}";'

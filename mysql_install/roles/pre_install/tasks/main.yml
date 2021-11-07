@@ -1,0 +1,34 @@
+- name: Disabling MySQL module
+  command: yum -y module disable mysql
+
+- name: Import RPM key
+  command: rpm --import http://spacewalko.telekom.lv/pub/RPM-GPG-KEY-mysql
+
+- name: Create datadir '/usr/lbin'
+  file:
+    path: /usr/lbin
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copying script - add_password_to_vsop.sh
+  copy:
+    src: "{{ add_password_to_vsop }}"
+    dest: /usr/lbin/add_password_to_vsop.sh
+    owner: root
+    group: root
+    mode: '0655'
+
+- name: Installing jq
+  yum:
+    name: jq
+    state: latest
+
+- name: Install pyMySQL
+  yum:
+    name: "{{ pymysql }}"
+    state: present
+
+- name: Install pexpect
+  command: pip3 install --proxy http://vproxy3.telekom.lv:8080 pexpect

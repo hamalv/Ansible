@@ -1,0 +1,2 @@
+pymysql: python3-mysql.x86_64
+add_password_to_vsop: add_password_to_vsop.sh

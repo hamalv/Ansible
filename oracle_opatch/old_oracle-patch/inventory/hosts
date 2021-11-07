@@ -1,0 +1,2 @@
+[database]
+cora-db-tst.telekom.lv ansible_become_user=oracle become-method=su 

@@ -1,0 +1,6 @@
+---
+  vars_prompt:
+    - name: "mysql_root_password"
+      prompt: "Enter password"
+      private: yes
+

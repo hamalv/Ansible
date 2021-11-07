@@ -1,0 +1,157 @@
+#--- 
+#############################
+### Install using yum 
+#############################  
+# - hosts: cassandra-install
+#   become: true
+#   tasks:
+#   - name: Import RPM key
+#     command: rpm --import http://spacewalko.telekom.lv/pub/RPM-GPG-KEY-cassandra
+
+  # - name: Instaling yum packages
+  #   yum: 
+  #     name: 
+  #       - jq.x86_64
+  #     state: present
+
+  
+
+
+#############################
+### Execute command
+#############################  
+# - hosts: all
+#   become: true
+#   tasks:
+#   - name: Execute command
+#     command: yum list openldap-clients
+#     register: response1
+
+#   - debug: msg="{{ response1.stdout }}"
+
+
+#   - name: Execute command
+#     command: yum list krb5-workstation
+#     register: response2
+
+#   - debug: msg="{{ response2.stdout }}"
+
+
+#   - name: Execute command
+#     command: yum list krb5-libs
+#     register: response3
+
+#   - debug: msg="{{ response3.stdout }}"
+
+# - hosts: all
+#   become: true
+#   tasks:
+#   - name: Execute command with response
+#     expect:
+#     command: command 
+#     responses:
+#         (?i)password: "password"
+#     no_log: true
+
+#############################
+### Create directory
+#############################
+# - hosts: cassandra-install
+#   - name: Create datadir '/data/cassandra'
+#       path: /data/cassandra
+#       state: directory
+#       owner: cassandra
+#       group: cassandra
+#       mode: '0755'
+
+
+#############################
+### File copy
+#############################  
+# - hosts: cassandra-install
+#   become: true
+#   tasks:
+#   - name: Copying file
+#     copy:
+#       src: cassandra.yaml
+#       dest: /etc/cassandra/default.conf/cassandra.yaml
+#       owner: root
+#       group: root
+#       mode: '0644'
+
+
+
+#######################################################################
+####################### Tasks #########################################
+#######################################################################
+---
+- hosts: kafka   
+  tasks:    
+    - name: Instaling yum packages
+      yum: 
+        name: 
+          - jq.x86_64
+          - java-1.8.0-openjdk.x86_64
+        state: present     
+
+    - name: Copying sjk-plus
+      copy:
+        src: sjk-plus-0.19.jar
+        dest: /etc/zabbix/sjk-plus-0.19.jar
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Copying ltc_jmxbeans.conf
+      copy:
+        src: ltc_jmxbeans.conf
+        dest: /etc/zabbix/zabbix_agentd.d/ltc_jmxbeans.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Creating symbolic link
+      shell: ln -s /etc/zabbix/sjk-plus-0.19.jar /etc/zabbix/scripts/sjk-current.jar
+
+    # - name: Copying zookeeper.service
+    #   copy:
+    #     src: zookeeper.service
+    #     dest: /etc/systemd/system/zookeeper.service
+    #     owner: root
+    #     group: root
+    #     mode: '0644'
+
+    # - name: Copying kafka.service
+    #   copy:
+    #     src: kafka.service
+    #     dest: /etc/systemd/system/kafka.service
+    #     owner: root
+    #     group: root
+    #     mode: '0644'
+
+    - name: Copying ltc_services-systemctl.conf
+      copy:
+        src: ltc_services-systemctl.conf
+        dest: /etc/zabbix/zabbix_agentd.d/ltc_services-systemctl.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    # - name: Running daemon-reload
+    #   shell: systemctl daemon-reload
+
+    # - name: Enable zookeeper.service
+    #   shell: systemctl enable zookeeper.service
+
+    # - name: Enable kafka.service
+    #   shell: systemctl enable kafka.service
+
+
+# JMX_PORT 38745
+# alternatives --config java
+# ZOO_4LW_COMMANDS_WHITELIST: ruok,mntr
+# UserParameter=echo2nc[*],echo $1 | nc $2 $3
+
+
+      
+  

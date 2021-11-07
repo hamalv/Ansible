@@ -1,0 +1,12 @@
+project_dir: /tmp/
+file: mysql.rpm
+mysql_datadir: /data/mysql
+mysql_etc_src: my.cnf.j2 
+mysql_config_include_dir: /etc/ 
+mysql_aud_src: server_audit.so.j2
+mysql_aud_file: /usr/lib64/mysql/plugin/server_audit.so
+overwrite_global_mycnf: true
+mysql_config_file: /etc/my.cnf
+mysql_log_error: /data/mysql/mysql.err
+mysql_log_file_group: mysql
+inventory_hostname: chao

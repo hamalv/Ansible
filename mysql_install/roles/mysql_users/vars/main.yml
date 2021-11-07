@@ -1,0 +1,14 @@
+t_asci1: "{{ lookup('password', '/dev/null length=2 chars=ascii_letters') }}"
+t_asci2: "{{ lookup('password', '/dev/null length=1 chars=ascii_letters') }}"
+t_asci3: "{{ lookup('password', '/dev/null length=3 chars=ascii_letters') }}"
+t_asci4: "{{ lookup('password', '/dev/null length=2 chars=ascii_letters') }}"
+t_digi1: "{{ lookup('password', '/dev/null length=2 chars=digits') }}"
+t_digi2: "{{ lookup('password', '/dev/null length=2 chars=digits') }}"
+t_rand1: "{{ lookup('password', '/dev/null length=1 chars=#,_,<,>') }}"
+t_rand2: "{{ lookup('password', '/dev/null length=1 chars=#,_,<,>') }}"
+t_rand3: "{{ lookup('password', '/dev/null length=2 chars=#,_,<,>') }}"
+
+
+password_root: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"
+password_zabbix: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"
+password_backupop: "{{ t_asci1 + t_rand1 + t_digi1 + t_asci2 + t_rand2 + t_asci3 + t_digi2 + t_rand3 + t_asci4 }}"

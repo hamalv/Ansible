@@ -1,0 +1,28 @@
+--- 
+   - hosts: database
+     user: oracle
+     vars: 
+        patch_location: "/usr/oracle/patches"
+        patch_zip: "p32900144_122010_Linux-x86-64.zip"
+        patch_short_name: "32900144"
+        opatch_zip: "p6880880_122010_Linux-x86-64.zip"
+        remote_location: "/usr/oracle/oradb01/install"
+        remote_oracle_home_path: /usr/oracle/ora122"
+        remote_oratab_file: "/etc/oratab"
+        remote_backup_location: "/usr/oracle/oradb01"
+        remote_backup_user: "oracle" # With what user to execute the backup. Ownership/privileges are preserved during backup.
+     serial: 1
+     vars_prompt:
+       - name: "root_password"
+         prompt: "\n-->[Applicable if you patch Grid Infrastructure]<--\nEnter root password (press enter to skip)"
+         private: yes
+       - name: "root_password_confirm"
+         prompt: "Enter root password again (press enter to skip)"
+         private: yes
+     pre_tasks:
+       - assert:
+           that: root_password == root_password_confirm
+           msg: "Root password missmatch." 
+     roles:
+       - orapatchcopy
+       - orapatch

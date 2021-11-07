@@ -1,0 +1,31 @@
+  - name: Create backup dir if it does not exist
+    file:
+      path: "{{ backup_datadir }}"
+      state: directory
+  - name: Add user dbbackop
+    command: "useradd -m dbbackop"
+  - name: Create ssh dir if it does not exist
+    file:
+      path: "{{ ssh_datadir }}"
+      state: directory
+  - name: Add keys
+    lineinfile:
+      dest=/home/dbbackop/.ssh/authorized_keys
+      state=present
+      create=yes
+      line="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVsPBFt/3hwwaf/XhhhdEJR4dcbftJWuZcCdO044zNw18S4/AjIjVdi0ADm01oT1cDzSFvSg9jNhZ9Kpqt6S2txcqSY5EG+OvTKRIpzZ8nxCU/aEcDD+8weYgFQdB8SARQ4HgXD3wtDi6RFvw+jYMKs9UfIQV6jgZOU8EzuVcyKPfqtIER/SvH9i2TfAnBi53R9r3zDY0CO+kPlGoH3t5KqUQ7utVMnucbhs4qzBrNpjg3Hg372VrPD31yB8lUn5sxVDPvrpaO2diYt5/OOZP6//hw5NPXCYs769X2anWnS3/BU6AVrt1avMfkxK/E9lOVZ9s0X2zDN+y3sclPqC7P dbbackop@verbo"
+  - name: Add verbo ssh key
+    command: "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVsPBFt/3hwwaf/XhhhdEJR4dcbftJWuZcCdO044zNw18S4/AjIjVdi0ADm01oT1cDzSFvSg9jNhZ9Kpqt6S2txcqSY5EG+OvTKRIpzZ8nxCU/aEcDD+8weYgFQdB8SARQ4HgXD3wtDi6RFvw+jYMKs9UfIQV6jgZOU8EzuVcyKPfqtIER/SvH9i2TfAnBi53R9r3zDY0CO+kPlGoH3t5KqUQ7utVMnucbhs4qzBrNpjg3Hg372VrPD31yB8lUn5sxVDPvrpaO2diYt5/OOZP6//hw5NPXCYs769X2anWnS3/BU6AVrt1avMfkxK/E9lOVZ9s0X2zDN+y3sclPqC7P dbbackop@verbo' > /home/dbbackop/.ssh/authorized_keys"  
+  - name: Change ssh key permission 
+    command: "chmod 600 /home/dbbackop/.ssh/authorized_keys"
+  - name: Chown .ssh directory 
+    command: "chown -R dbbackop /home/dbbackop/.ssh"
+  - name: Add user dbbackop to sudoers     
+    command: "echo 'Defaults:dbbackop !requiretty' > /etc/sudoers.d/dbbackop"
+  - name: Copy backup file
+    template:
+      src: "{{ backup_file }}"
+      dest: "{{ backup_datadir }}"
+      owner: root
+      group: root
+      mode: 0644

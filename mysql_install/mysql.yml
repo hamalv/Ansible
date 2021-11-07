@@ -1,0 +1,32 @@
+---
+# - hosts: all
+#   become: true
+#   roles:
+#     - delete
+
+- hosts: all
+  become: true
+  roles: 
+    - pre_install
+
+- hosts: all
+  become: true
+  roles: 
+    - mysql_install
+
+- hosts: all
+  become: true
+  roles: 
+    - mysql_users
+
+- hosts: all
+  vars_prompt:
+    - name: vsop_account
+      prompt: VSOP username?
+      private: no
+    - name: vsop_password
+      prompt: VSOP password?
+      private: yes
+  become: true
+  roles: 
+    - post_install

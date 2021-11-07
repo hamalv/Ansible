@@ -1,0 +1,33 @@
+---
+#    - name: check lock
+#      shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+#      delegate_to: ansible
+
+    - name: Installs mysql python needed for mysql connections
+      yum: pkg=MySQL-python state=present
+    - name: Copy my.cnf override files into include directory.
+      template:
+        src: "{{ mysql_etc_src }}"
+        dest: "{{ mysql_config_file }}"
+        owner: root
+        group: root
+        mode: 0644
+    - name: Installs mysql server
+      yum: pkg=mysql-server state=present 
+#    - name: Copy audit plugin file into include directory.
+#     copy:
+#        src: "{{ mysql_aud_src }}"
+#        dest: "{{ mysql_aud_file }}"
+#        owner: root
+#        group: root
+#        mode: 0644  
+    - name: Create datadir if it does not exist
+      file:
+        path: "{{ mysql_datadir }}"
+        state: directory
+        owner: mysql
+        group: mysql
+        mode: 0755
+        setype: mysqld_db_t
+    - name: start mysql
+      service: name=mysqld state=started

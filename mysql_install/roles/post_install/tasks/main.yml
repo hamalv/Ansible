@@ -1,0 +1,42 @@
+- name: Creating symblink pre-freeze-script
+  command: ln -s /usr/local/bin/mysql/pre-freeze-script /usr/sbin/pre-freeze-script
+
+- name: Creating symblink link post-thaw-script
+  command: ln -s /usr/local/bin/mysql/post-thaw-script /usr/sbin/post-thaw-script
+
+- name: Create directory /var/log/vmsnap/
+  file:
+    path: /var/log/vmsnap/
+    state: directory
+    owner: root
+    group: root
+
+- name: Execute pre-freeze-script
+  command: /usr/local/bin/mysql/pre-freeze-script
+
+- name: Execute post-thaw-script
+  command: /usr/local/bin/mysql/post-thaw-script
+
+- name: Read VMsnap logfile
+  command: cat /var/log/vmsnap/vmsnap_mysql.log
+  register: vmsnap_log
+- debug:  
+    msg: "{{ vmsnap_log.stdout }}"
+
+- debug:  
+    msg: 
+      - "Temporary root password - {{ mysql_temp_password.stdout }} "
+      - "Root password - {{ pwd_root }} "
+      - "Zabbix password - {{ pwd_zabbix }} "
+      - "BackupOP password - {{ pwd_backupop }} "
+
+- name: Add passwords to VSOP
+  # vars:
+  #   - pwd_root: Ih_47j<DMY95_#jh
+  expect:
+    command: /usr/lbin/add_password_to_vsop.sh {{inventory_hostname|regex_replace('-mgmt')}} root '{{ pwd_root }}' {{vsop_account}} 
+    responses:
+        Password: "{{ vsop_password }}"
+  when: pwd_root is defined
+  no_log: true
+  #delegate_to: ansible

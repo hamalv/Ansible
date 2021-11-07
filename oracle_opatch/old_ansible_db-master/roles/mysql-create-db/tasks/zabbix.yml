@@ -1,0 +1,30 @@
+---
+
+- hosts: tvotke-prd 
+  vars:
+      db_name: televote
+      mysql_zabbix_password: N4L,Tuz942HqsWa9
+      zabbix_datadir: /var/lib/zabbix
+      zabbix_su_file: zabbix
+      zabbix_su_datadir: /etc/sudoers.d/   
+  tasks:
+   - name: Create zabbix dir if it does not exist
+     file:
+       path: "{{ zabbix_datadir }}"
+       state: directory
+       owner: zabbix 
+   - name: Add user dbbackop to sudoers     
+     command: sudo -u zabbix mysql_config_editor set --login-path=zabbix_mon --host=localhost --user=zabbix --password
+     response:
+       Enter password: "{{ mysql_zabbix_password }}" 
+   - name: Copy backup file
+     template:
+       src: "{{ zabbix_su_file }}"
+       dest: "{{ zabbix_su_datadir }}"
+       owner: root
+       group: root
+       mode: 0644
+   - name: Reload service Zabbix 
+     service:
+       name: zabbix-agent 
+       state: reloaded 

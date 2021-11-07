@@ -1,0 +1,15 @@
+---
+
+- hosts: tvotke-prd 
+  vars:
+      db_name: televote
+      mysql_zabbix_password: N4L,Tuz942HqsWa9
+      zabbix_datadir: /var/lib/zabbix 
+  tasks:
+   - name: Create zabbix dir if it does not exist
+     file:
+       path: "{{ zabbix_datadir }}"
+       state: directory
+       owner: zabbix 
+   - name: Add user dbbackop to sudoers     
+     command: sudo -u zabbix mysql_config_editor set --login-path=zabbix_mon --host=localhost --user=zabbix --p'"{{ mysql_zabbix_password }}"'

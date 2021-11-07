@@ -1,0 +1,12 @@
+---
+     - name: check lock
+       shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+       delegate_to: ansible
+
+     - name: get temporary root password from log file
+       shell: "grep -s -o 'temporary password.*' /var/log/mysqld.log | tail -1 | cut -d: -f2 | sed 's/[[:space:]]//g'"
+       register: mysql_temporary_root_password
+       changed_when: false
+     - name: reset expired temporary root password
+       shell: "mysql -u root -p'{{ mysql_temporary_root_password.stdout }}' --connect-expired-password -NBe \"ALTER USER root@localhost IDENTIFIED BY '{{ mysql_root_password }}'\"" 
+

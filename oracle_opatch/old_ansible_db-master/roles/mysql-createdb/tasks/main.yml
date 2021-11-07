@@ -1,0 +1,21 @@
+---
+#    - name: check lock
+#      shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+#      delegate_to: ansible
+    - name: Create databases
+      mysql_db:
+        login_unix_socket: /data/mysql/mysql.sock
+        name: "{{ mysql_db_name }}"
+        state: present
+        encoding: "{ mysql_db_enc }"
+        login_user: 'root'
+        login_password: "{{ mysql_root_password }}" 
+    - name: Create Teh user 
+      mysql_user:
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        login_unix_socket: /data/mysql/mysql.sock 
+        name: "{ mysql_tuser }"
+        password: "{{ mysql_tuser_password }}"
+        priv: '*.*:SUPER,REPLICATION CLIENT,SELECT,SHOW VIEW'
+        state: present

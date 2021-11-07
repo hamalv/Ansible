@@ -1,0 +1,4 @@
+- name: add ssh key for jfreiber
+  authorized_key:
+    user: jfreiber
+    key: "ssh-fdgfdgfdgfdfdfdgfgfd34322"

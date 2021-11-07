@@ -1,0 +1,31 @@
+---
+#    - name: check lock
+#      shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+#      delegate_to: ansible
+    - name: Create user Zabbix
+      mysql_user:
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        login_unix_socket: /data/mysql/mysql.sock 
+        name: zabbix
+        password: "{{ mysql_zabbix_password }}"
+        priv: '*.*:SUPER,REPLICATION CLIENT,SELECT,SHOW VIEW'
+        state: present
+    - name: Create a directory if it does not exist
+      file:
+        path: /var/lib/zabbix/
+        state: directory
+        owner: zabbix 
+    - name: Create zabbix login path
+      expect: 
+         command: sudo -u zabbix mysql_config_editor set --login-path=zabbix_mon --host=localhost --user=zabbix --password
+         responses:
+            (?i)password: "{{ mysql_zabbix_password }}"
+            (?i)continue: Y
+    - name: modify ltc_metadata.conf
+      command: sed -i '1s/$/ DBA_MYSQL/' /etc/zabbix/zabbix_agentd.d/ltc_metadata.conf 
+
+    - name: Restart service zabbix agent, in all cases
+      service:
+        name: zabbix-agent 
+        state: restarted        

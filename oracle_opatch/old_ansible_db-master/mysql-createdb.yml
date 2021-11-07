@@ -1,0 +1,21 @@
+---
+  - name: Playbook mysql-createdb  
+    hosts: testos
+    vars_prompt:
+     - name: "mysql_root_password"
+       prompt: "Enter mysql root password?"
+       private: no
+     - name: "mysql_tuser"
+       prompt: "Enter Teh user name?"
+       private: no 
+     - name: "mysql_tuser_password"
+       prompt: "Enter Teh user mysql password?"
+       private: no
+     - name: "mysql_db_name"
+       prompt: "Enter DB user?"
+       private: no
+     - name: "mysql_db_enc"
+       prompt: "Enter DB encoding?"
+       private: no   
+    roles:
+      - mysql-createdb 

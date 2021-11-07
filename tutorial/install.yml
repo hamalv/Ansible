@@ -1,0 +1,91 @@
+---
+
+- hosts: all
+  become: true                      # execute as sudo
+  tasks:
+  
+  - name: update repository index
+    apt:
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install apache2 package   # function name
+    apt:                            # module name
+      name: apache2                 # package we want to install
+      state: latest                 # install latest package on every run
+    when: ansible_distribution == "Ubuntu"  # For spesific distribution
+    # when: ansible_distribution in ["Debian","Ubuntu"]   # For multiple OS
+    # when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "8"
+  
+  - name: add php support for apache
+    apt: 
+      name: libapache2-mod-php
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+  
+  - name: update repository index
+    dnf:
+      update_cache: yes
+    when: ansible_distribution == "Centos"
+
+  - name: install apache2 package  
+    dnf:                           
+      name: httpd                   
+      state: latest                 
+    when: ansible_distribution == "Centos" 
+  
+  - name: add php support for apache
+    dnf: 
+      name: php
+      state: latest
+    when: ansible_distribution == "Centos"
+
+
+
+
+
+
+  ### consalidate multiple packages for servers
+  - name: install apache2 and php for Ubuntu
+    apt: 
+      name: 
+        - apache2
+        - libapache2-mod-php
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install apache and php on Centos
+    dnf:
+      name: 
+        - httpd 
+        - php
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "Centos"
+
+
+  
+
+  ### Using variables for different hosts. 
+  - name: install apache and php on Centos
+    package:                          # dnf for centos, for arch using packman
+      name: 
+        - "{{ apache_package }}"      # variables in hosts file
+        - "{{ php_package }}"         # variables in hosts file
+      state: latest
+      update_cache: yes
+
+
+
+
+
+
+
+
+
+
+
+
+  
+

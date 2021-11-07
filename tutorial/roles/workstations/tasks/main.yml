@@ -1,0 +1,12 @@
+- name: install unzip
+  package:
+    name: unzip
+
+- name: install terraform
+  unarchive:
+    src: https://_____bla_bla_link_____
+    dest: /usr/local/bin/
+    remote_src: yes
+    mode: 0755
+    owner: root
+    group: root

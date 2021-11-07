@@ -1,0 +1,10 @@
+---
+- hosts: database
+  vars_files:
+    - /etc/ansible/ansible-orapatch-master/roles/orapatch/vars/main.yml
+ - block:  
+       - name: Mv opatch dir
+         include_vars:
+            dir: /etc/ansible/ansible-orapatch-master/roles/orapatch/vars
+       - name: Mv1opatch dir
+         command: ls {{oracle_home_path }}/OPatch  

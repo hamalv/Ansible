@@ -1,0 +1,33 @@
+---
+#    - name: check lock
+#      shell: /usr/lbin/chklock.sh {{inventory_hostname}}
+#      delegate_to: ansible
+    - name: Create databases
+      mysql_db:
+        login_unix_socket=/data/mysql/mysql.sock
+        name={{ db_name }}
+        state=present
+        collation=utf8_unicode_ci 
+        encoding=utf8
+        login_user='root'
+        login_password='{{ mysql_root_password }}'
+    - name: Create user Backup
+      mysql_user:
+        login_unix_socket=/data/mysql/mysql.sock 
+        name=BackupOP
+        password="{{ mysql_backup_password }}"
+        priv="*.*:SELECT,SUPER,LOCK TABLES,SHOW VIEW,EVENT"
+        state=present 
+        login_user='root'
+        login_password='{{ mysql_root_password }}'
+        login_user='root'
+        login_password='{{ mysql_root_password }}'
+#    - name: add line to servlist obamo
+#      command: ssh obamo 'echo "{{ mysql_root_password }}" >> /usr/oracle/dba/mysql/servlist' 
+     # Configure MySQL.
+    - include_tasks: backup.yml
+    - local_action:
+                    mail
+                    subject="Ansible-report"
+                    body="Hello DBA, we just created database {{ db_name }},which is located on {{ ansible_hostname }}a"
+                    to="{{ mail_to_dba }}"
